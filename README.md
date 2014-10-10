@@ -1,14 +1,20 @@
-This is a simple way to setup up some basic visitor stats for your rails app. 
-The only requirement is that you must have rails 4.1 and not a massive amout of
+####Simple split testing and analytics for your 4.1+ rails app
+
+This is a simple way to set up some basic visitor stats for your rails app. 
+The only requirement is that you must have rails 4.1+ and not a massive amount of
 traffic. Sometimes, I run cold email campaigns for silly side projects and I want
 to know. 
 
-- who clicked and when did they click it.
-- what page(s) did they visit.
-- what was their click path before they left the website.
-- what view were they served if I'm testing different pages. 
+- [ ] who clicked and when did they click it.
+- [ ] what page(s) did they visit.
+- [ ] what was their click path before they left the website.
+- [ ] what view were they served if I'm testing different pages. 
 
-Very basic stuff and didn't take that long so I hope it can help you with your projects. 
+Very basic stuff and it didn't take that long to implement so I hope it can help you with your projects.
+
+
+
+####Model the events using request object
 
 Everything I want to know can be extracted from the request object created by rails for every action
 in my application. I'll want to store that info for every action I care about, and show it on some sort
@@ -20,16 +26,15 @@ First, I'll create the model for the visitor events.
   rails g model AnalyticsEvent test_name:string visitor_ip_address:string path_visited:string method_called:string controller_called:string controller_action_called:string visit_time:string
 ````
 
-Nothing special here just creating the model to hold all the stuff from visitor request that I care about. The test_name field is to keep track
-of what page the visitor saw if I'm serving up different pages for a split test or the visitor came from some mobile device. These are all methods
-you can call on the request object from within your controller so lets jump to that. Be sure to run the migration after running that command. 
+Nothing special here just creating the model to hold all the information from a visitor request that I care about. The test_name field is to keep track of what page the visitor saw if I'm serving up different pages for a split test. These are all methods you can call on the request object from within your `applcation_controller` so lets jump to that. Be sure to run the migration.
 
 ```ruby
   bundle exec rake db:migrate
 ```
+####Record incoming visitor request details
 
-Now, in you application controller you can start creating these analytic events object after they happen and it's pretty straight forward. 
-Let's make the creation of our analytics objects, after the action happens. 
+Now, in your `application_controller` you can start creating these analytic_events objects after they happen and it's pretty straight forward. 
+Let's make the creation of our analytics objects, after any given action happens. 
 
  ```ruby
   class ApplicationController < ActionController::Base
@@ -38,7 +43,7 @@ Let's make the creation of our analytics objects, after the action happens.
   end
  ```
  
- So, after every controller action in the application this method is going to be called, so let's write the `log_anlytics`.
+ So, after every controller action in the application this method is going to be called, so let's write `log_anlytics`.
 
  ```ruby
   class ApplicationController < ActionController::Base
@@ -63,7 +68,7 @@ Let's make the creation of our analytics objects, after the action happens.
   end
  ```
  
- This shouldn't work as is because the `variant` hasn't been setup. But this is the basic pattern. Create an analytics event after a controller action in your applcaiton. So, let's make it so that the `request.variant.join` makes sense. 
+ This shouldn't work as is because the `variant` hasn't been setup. But this is the basic pattern. Create an analytics event after a controller action in your application. Let's make it so that the `request.variant.join` makes sense. 
  
  ```ruby
   class ApplicationController < ActionController::Base
@@ -101,7 +106,7 @@ Let's make the creation of our analytics objects, after the action happens.
   end
  ```
  
- Here, we're setting up the begginings of split testing. `detect_variant` randomly selects an element from the split_tests array. Then a case statement takes over to determine what variant will be served. There is more to this explained later, but for now let's just focus on the analytics part. We just needed the request variant to be set to something we created. If it doesn't make sense right now that ok.
+ Here, we're setting up the begginings of split testing. `detect_variant` randomly selects an element from the split_tests array. Then a case statement takes over to determine what variant will be served. There is more to this explained later, but for now let's just focus on the analytics part. We just needed the request variant to be set to something we created. If it doesn't make sense right now that's ok.
  
  I'm going to change the `detect_variant` method so we get the same one every time and we'll revisit this later.
  
@@ -147,6 +152,8 @@ Let's make the creation of our analytics objects, after the action happens.
  
  Ok, so now every time you execute an action in your application and event should be created. To confirm this is working visit a couple pages in your applicaiton then open up your rails console and run `AnalyticsEvent.count`. This will basically return the number of actions you just committed by jumping around you applicaiton. 
  
+####Create the analytics dashbaord
+ 
  Cool! We have details about each request being saved as records. Now, lets create a simple dashbord to view the details of all these records we're
  saving. 
  
@@ -166,11 +173,11 @@ Let's make the creation of our analytics objects, after the action happens.
  end
  ```
 
-Update your routes file. If you have an admin setup through devise or something put it behind your admin slug. I'm just going to use a basic route and then http auth. So, add this line (or something similar) to your routes file. 
+Update your routes file. If you have an admin setup through devise or something put it behind your admin namespace. I'm just going to use a basic route and then http auth. So, add this line (or something similar) to your routes file. 
 
 `get '/a/analytics_dashboard', to: 'analytics_events#analytics_dashboard'`
 
-And, I'm going to add basic auth to my analytics dashboard because I don't want viewable by the public. 
+And, I'm going to add basic auth to my analytics dashboard because I don't want it viewable by the public. 
 
 ```ruby
 class AnalyticsEventsController < ApplicationController
@@ -184,7 +191,10 @@ class AnalyticsEventsController < ApplicationController
 end
 ```
 
-Ok, now lets update our view to see the data we've been collecting. I'm using bootstrap in my project but obviously visually you can display this any way you want.
+####Analytics dashbaord view
+
+
+Ok, now lets update our view to see the data we've been collecting. I'm using bootstrap in my project but obviously you can display this any way you want.
 
 `analytics_dashboard.html.erb`
 
@@ -227,11 +237,15 @@ You should now see a table with all the request details that we have been collec
 
 We still need to revisit serviing different pages for split testing but that 3rd item I want to improve just a bit. I want to be able to click an IP adress then see the different pages that ip address visited chronologically. This gives me some idea of that visitors journey through the web app and when they decided to stop. 
 
+####Seeing visitor click paths
+
 This is easy enough so let's create another simple view. First in your routes add something like 
 
 `get '/a/analytics_dashboard/visitor_journey', to: 'analytics_events#visitor_journey', as:  'visitor_journey'`
 
-Then, back in your controller make that `visitor_journey` method you're refrencing in the routes file. 
+(please choose better names)
+
+Then, back in your controller make that `visitor_journey` action you're refrencing in the routes file. 
 
 ```ruby  
 class AnalyticsEventsController < ApplicationController
@@ -250,7 +264,7 @@ end
 ```
 
 We're going to lookup only events that happened from a certain IP address. The one we click on. We'll pass in that ip address as a query parameter
-when we click through to the visitory journey page. So, let's update our analytics_dashbaord view to do that. 
+when we click through to the visitor journey page. So, let's update our analytics_dashbaord view to do that. 
 
 `analytics_dashboard.html.erb`
 
@@ -271,8 +285,7 @@ when we click through to the visitory journey page. So, let's update our analyti
 		<tbody>
 			<% @events.each do |event| %>
 			     <tr>
-				   <td><%= event.test_name %></td>
-				   # set a query parameter to the ip_adress of the event so we can look it up from our controller
+				   <td><%= event.test_name %></td>				 
 				   <td><%= link_to(event.visitor_ip_address, visitor_journey_url(query: "#{event.visitor_ip_address}")) %></td>
 				   <td><%= event.path_visited %></td>
 				   <td><%= event.method_called %></td>
@@ -286,13 +299,13 @@ when we click through to the visitory journey page. So, let's update our analyti
 </div>
 ```
 
-The comment helps explain what we're doing here but we're basically adding the ip address to the url so we can use it to look up the events
-associated with the IP adress we care about to paint a visitors journey (naming is hard) through our app. 
+Here we're basically adding the ip address to the url so we can use it to look up the events
+associated with the IP adress we care about to paint a visitors journey through our app. 
 
-One thing you may have noticed by now is we're tracking events to our analytics pages. We don't really care about that so let's fix it in the
+One thing you may have noticed by now is we're tracking events to our actual analytics pages. We don't really care about that so let's fix it in the
 `applicaiton_controller`
 
-`after_action :log_anlytics, except: [:analytics_dashboard,:visitor_journey]`
+`after_action :log_anlytics, except: [:analytics_dashboard, :visitor_journey]`
 
 Update your after action to read like this and add any controller actions you don't care about tracking here. 
 
@@ -300,7 +313,7 @@ Now, we need to create the `visitor_journey` view in `views/analytics_events/`
 
 `views/analytics_events/visitor_journey.html.erb`
 
-In this view we have access to all the visitor actions associated with the IP adress we clicked. I used some basic bootstrap styling to display this
+In this view we have access to all the visitor actions associated with the IP address we clicked. I used some basic bootstrap styling to display this
 
 ```html
 <div class='row'>
@@ -318,6 +331,8 @@ In this view we have access to all the visitor actions associated with the IP ad
 
 Ok, now we have a table of all visitor events that happen in our applicaiton and when we click on a visitor (ip address) we get a picture of how that visitor moved through our website. Sweet!
 
+####Basic split testing plumbing
+
 Now, let's revisit split testing. Back in your `application_controller` change back the `detect_variant` method
 
 ```ruby
@@ -334,9 +349,9 @@ Now, let's revisit split testing. Back in your `application_controller` change b
     end
 ``` 
  
- I've changed back the method to randomly choose an element from the split tests array. This is like the bare bones of split testing but works for our purposes. Shadow and bridge are just names of split test I'm running. This could be anything but it must match your views. 
+ I've changed back the method to randomly choose an element from the split tests array. This is the bare bones of split testing but works for our purposes. `shadow` and `bridge` are just names of split tests I'm running. This could be anything but it should match your views. 
  
- So, now that you are setting a variant update your controller for a page you are testing to respond to it. For example, if I'm running a test on my home marketing page to see what copy or design performs better I would update something like this. 
+Now that you are setting a variant, update your controller for a page you are testing to respond to it. For example, if I'm running a test on my home marketing page to see what copy or design performs better I would update something like this. 
  
  ```ruby
  
@@ -359,8 +374,8 @@ class StaticPagesController < ApplicationController
   def home  
    respond_to do |format|
      format.html
-     format.html.shadow # corresponds to app/views/static_pages/home.html+shadow.erb
-     format.html.bridge # corresponds to app/views/static_pages/home.html+bridge.erb
+     format.html.shadow # corresponds to app/views/static_pages/home.html+shadow.erb <-- create this file now
+     format.html.bridge # corresponds to app/views/static_pages/home.html+bridge.erb <-- create this file now
    end
   
   end
@@ -397,10 +412,8 @@ If you're worried about a variant being set and not having a corresponding view 
       variant = request.variant.try(:join) || "no_test"
 	      
       AnalyticsEvent.create({
-		# this will be control now always.         
         :test_name => variant,
         :visitor_ip_address => request.remote_ip,
-		# this little bit of strong processing is just to make it look prettier
         :path_visited => request.url.gsub("http://",""),
         :method_called => request.method,
         :controller_called => request.path_parameters[:controller],
@@ -413,22 +426,22 @@ If you're worried about a variant being set and not having a corresponding view 
  ``` 
  
  Three things happened here. 
-   1. Update the before action to only set the variant on pages/actions we are testing. 
+   1. Update the before action to only set the variant test names on pages/actions we are testing. 
    2. Change back the case statement to randomly pick an element from split_tests array 
-   3. in the `log_analytics` method we need to set the variant to something and when we visit a page other than home.html.erb given the code above it would fail. So just set it to "no_test" if a visitor visits a page we're not testing. 
+   3. In the `log_analytics` method we need to set the variant to something and when we visit a page other than home.html.erb given the code above it would fail. So just set it to "no_test" if a visitor visits a page we're not testing. 
    
-Your control page can always be "A." Since rails fails back to default if no corresponding view is found as described above, you can just make views for variants and your control with be displayed by default. A little confusing because you're setting the variant to control, but you don't need to do anything beyond that i.e. only make views for variants, rails takes care of the rest. 
+Your control page can always be "A." Since rails fails back to default if no corresponding view is found as described above, you only have to make additional views for variants and your control will be displayed by default. A little confusing because you're setting the variant to control, but you don't need to do anything beyond that i.e. only make views for variants, rails takes care of the rest. 
 
-This is cool because when we click on a visitor IP we can display the variant they were shown and see (trivially) if that got them to take another action!
+This is cool because when we click on a visitor IP we can display the variant test name they were shown and see (trivially) if that got them to take another action!
 
 That's how I got some basic visitor tracking going for my rails app after being sick of implementing tracking scripts and just wanting to see a couple things easily. Worth the time if you don't want to setup an account and just kinda want to paint a picture. 
 
-A Cool roadmap
-- clearly define and model click paths for visitors so we can see what they did each time they were active on the site instead of one long stream
-- make this a gem?
-- implement long polling for analytics dashboard. Right now requires a page refresh. 
-- conditionally highlighting of table cells to visually see stuf that related, e.g. tests, controller actions
-- Improve everything? (I'm not so sure this is the best way to do everything but it worked for me and was fairly straightforward)
+####A Cool roadmap
+- Clearly define and model click paths for visitors so we can see what they did each time they were active on the site instead of one long stream.
+- Make this a gem?
+- Implement long polling for analytics dashboard. Right now requires a page refresh. 
+- Conditionally highlight table cells to visually see stuff that's related, e.g. tests, controller actions
+- Improve patterns? (I'm not so sure this is the best way to do everything but it worked for me and was fairly straightforward)
 
 -twiz
  
