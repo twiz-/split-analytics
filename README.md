@@ -220,10 +220,10 @@ Ok, now lets update our view to see the data we've been collecting. I'm using bo
 ```
 You should now see a table with all the request details that we have been collecting for every action in your view at `/a/analytics_dashboard`. Now, let's update that list I had in the beginning. 
 
-- √ who clicked and when did they click it.
-- √ what page(s) did they visit.
-- what was their click path before they left the website.
-- √ what view were they served if I'm testing different pages. 
+ [x] who clicked and when did they click it.
+ [x] what page(s) did they visit.
+ [ ] what was their click path before they left the website.
+ [x] what view were they served if I'm testing different pages. 
 
 We still need to revisit serviing different pages for split testing but that 3rd item I want to improve just a bit. I want to be able to click an IP adress then see the different pages that ip address visited chronologically. This gives me some idea of that visitors journey through the web app and when they decided to stop. 
 
