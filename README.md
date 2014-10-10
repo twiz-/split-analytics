@@ -3,7 +3,7 @@
 This is a simple way to set up some basic visitor stats for your rails app. 
 The only requirement is that you must have rails 4.1+ and not a massive amount of
 traffic. Sometimes, I run cold email campaigns for silly side projects and I want
-to know. 
+to know-
 
 - [ ] who clicked and when did they click it.
 - [ ] what page(s) did they visit.
@@ -38,16 +38,16 @@ Let's make the creation of our analytics objects, after any given action happens
 
  ```ruby
   class ApplicationController < ActionController::Base
-    after_action :log_anlytics
+    after_action :log_analytics
 	
   end
  ```
  
- So, after every controller action in the application this method is going to be called, so let's write `log_anlytics`.
+ So, after every controller action in the application this method is going to be called, so let's write `log_analytics`.
 
  ```ruby
   class ApplicationController < ActionController::Base
-    after_action :log_anlytics
+    after_action :log_analytics
 	
 	private
 	
@@ -72,7 +72,7 @@ Let's make the creation of our analytics objects, after any given action happens
  
  ```ruby
   class ApplicationController < ActionController::Base
-    after_action :log_anlytics
+    after_action :log_analytics
 	before_action :detect_variant
 	
 	private
@@ -112,7 +112,7 @@ Let's make the creation of our analytics objects, after any given action happens
  
  ```ruby
   class ApplicationController < ActionController::Base
-    after_action :log_anlytics
+    after_action :log_analytics
 	before_action :detect_variant
 	
 	private
@@ -138,7 +138,7 @@ Let's make the creation of our analytics objects, after any given action happens
 		# this will be control now always.         
         :test_name => variant,
         :visitor_ip_address => request.remote_ip,
-		# this little bit of strong processing is just to make it look prettier
+		# this little bit of strig processing is just to make it look prettier
         :path_visited => request.url.gsub("http://",""),
         :method_called => request.method,
         :controller_called => request.path_parameters[:controller],
@@ -150,11 +150,11 @@ Let's make the creation of our analytics objects, after any given action happens
   end
  ```
  
- Ok, so now every time you execute an action in your application and event should be created. To confirm this is working visit a couple pages in your applicaiton then open up your rails console and run `AnalyticsEvent.count`. This will basically return the number of actions you just committed by jumping around you applicaiton. 
+ Ok, so now every time you execute an action in your application and event should be created. To confirm this is working visit a couple pages in your applicaiton then open up your rails console and run `AnalyticsEvent.count`. This will basically return the number of actions you just committed by jumping around your application. 
  
 ####Create the analytics dashbaord
  
- Cool! We have details about each request being saved as records. Now, lets create a simple dashbord to view the details of all these records we're
+ Cool! We have details about each request being saved as records. Now, lets create a simple dashboard to view the details of all these records we're
  saving. 
  
  `rails g controller analytics_events analytics_dashboard`
@@ -235,7 +235,7 @@ You should now see a table with all the request details that we have been collec
 - [ ] what was their click path before they left the website.
 - [x] what view were they served if I'm testing different pages. 
 
-We still need to revisit serviing different pages for split testing but that 3rd item I want to improve just a bit. I want to be able to click an IP adress then see the different pages that ip address visited chronologically. This gives me some idea of that visitors journey through the web app and when they decided to stop. 
+We still need to revisit serving different pages for split testing but that 3rd item I want to improve just a bit. I want to be able to click an IP adress then see the different pages that ip address visited chronologically. This gives me some idea of that visitor's journey through the web app and when they decided to stop. 
 
 ####Seeing visitor click paths
 
@@ -243,7 +243,7 @@ This is easy enough so let's create another simple view. First in your routes ad
 
 `get '/a/analytics_dashboard/visitor_journey', to: 'analytics_events#visitor_journey', as:  'visitor_journey'`
 
-(please choose better names)
+(please choose better names :p)
 
 Then, back in your controller make that `visitor_journey` action you're refrencing in the routes file. 
 
@@ -305,7 +305,7 @@ associated with the IP adress we care about to paint a visitors journey through 
 One thing you may have noticed by now is we're tracking events to our actual analytics pages. We don't really care about that so let's fix it in the
 `applicaiton_controller`
 
-`after_action :log_anlytics, except: [:analytics_dashboard, :visitor_journey]`
+`after_action :log_analytics, except: [:analytics_dashboard, :visitor_journey]`
 
 Update your after action to read like this and add any controller actions you don't care about tracking here. 
 
@@ -388,7 +388,7 @@ If you're worried about a variant being set and not having a corresponding view 
 
  ```ruby
   class ApplicationController < ActionController::Base
-    after_action :log_anlytics
+    after_action :log_analytics, except: [:analytics_dashboard, :visitor_journey]
 	before_action :detect_variant, only: [:home]
 	
 	private
@@ -428,9 +428,9 @@ If you're worried about a variant being set and not having a corresponding view 
  Three things happened here. 
    1. Update the before action to only set the variant test names on pages/actions we are testing. 
    2. Change back the case statement to randomly pick an element from split_tests array 
-   3. In the `log_analytics` method we need to set the variant to something and when we visit a page other than home.html.erb given the code above it would fail. So just set it to "no_test" if a visitor visits a page we're not testing. 
+   3. In the `log_analytics` method we need to set the variant to something and when we visit a page other than home.html.erb given the code before this it would fail. So just set it to "no_test" if a visitor visits a page we're not testing. 
    
-Your control page can always be "A." Since rails fails back to default if no corresponding view is found as described above, you only have to make additional views for variants and your control will be displayed by default. A little confusing because you're setting the variant to control, but you don't need to do anything beyond that i.e. only make views for variants, rails takes care of the rest. 
+Your control page can always be "A." Since rails fails back to default if no corresponding view is found as described above, you only have to make additional views for variants and your control will be displayed by default. A little confusing because you're setting the variant to control, but you don't need to do anything beyond that i.e. **only make additional views for variants**, rails takes care of the rest. 
 
 This is cool because when we click on a visitor IP we can display the variant test name they were shown and see (trivially) if that got them to take another action!
 
