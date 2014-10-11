@@ -11,7 +11,7 @@ to know-
 - [ ] what view were they served if I'm testing different pages. 
 
 Very basic stuff and it didn't take that long to implement so I hope it can help you with your projects.
-If everything works as expected you should have somthing like this for [your dashboard](https://s3-us-west-2.amazonaws.com/fiftyfourfooty/index.png) and something like this for your [visitor journey's](https://s3-us-west-2.amazonaws.com/fiftyfourfooty/journey.png).
+If everything works as expected you should have something like this for [your dashboard](https://s3-us-west-2.amazonaws.com/fiftyfourfooty/index.png) and something like this for your [visitor journey's](https://s3-us-west-2.amazonaws.com/fiftyfourfooty/journey.png).
 
 
 ####Model the events using request object
