@@ -11,7 +11,10 @@ to know-
 - [ ] what view were they served if I'm testing different pages. 
 
 Very basic stuff and it didn't take that long to implement so I hope it can help you with your projects.
-If everything works as expected you should have something like this for [your dashboard](https://s3-us-west-2.amazonaws.com/fiftyfourfooty/index.png) and something like this for your [visitor journey's](https://s3-us-west-2.amazonaws.com/fiftyfourfooty/journey.png).
+If everything works as expected you should have something like the following dashboard and visitor journey. 
+
+- [your dashboard](https://s3-us-west-2.amazonaws.com/fiftyfourfooty/index.png) 
+- [visitor journey's](https://s3-us-west-2.amazonaws.com/fiftyfourfooty/journey.png).
 
 
 ####Model the events using request object
@@ -27,6 +30,7 @@ First, I'll create the model for the visitor events.
 ````
 
 Nothing special here just creating the model to hold all the information from a visitor request that I care about. The test_name field is to keep track of what page the visitor saw if I'm serving up different pages for a split test. These are all methods you can call on the request object from within your `applcation_controller` so lets jump to that. Be sure to run the migration.
+*note: you can just use rails `created_at` to determine `visit_time` but I added this field in case I wanted to create the record later using some delayed job.*
 
 ```ruby
   bundle exec rake db:migrate
