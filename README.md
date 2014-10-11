@@ -154,7 +154,7 @@ Let's make the creation of our analytics objects, after any given action happens
   end
  ```
  
- Ok, so now every time you execute an action in your application and event should be created. To confirm this is working visit a couple pages in your applicaiton then open up your rails console and run `AnalyticsEvent.count`. This will basically return the number of actions you just committed by jumping around your application. 
+ Ok, so now every time you execute an action in your application an `AnalyticsEvent` should be created. To confirm this is working visit a couple pages in your applicaiton then open up your rails console and run `AnalyticsEvent.count`. This will basically return the number of actions you just committed by jumping around your application. 
  
 ####Create the analytics dashbaord
  
