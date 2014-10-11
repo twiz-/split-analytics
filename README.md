@@ -14,7 +14,7 @@ Very basic stuff and it didn't take that long to implement so I hope it can help
 If everything works as expected you should have something like the following dashboard and visitor journey. 
 
 - [your dashboard](https://s3-us-west-2.amazonaws.com/fiftyfourfooty/index.png) 
-- [visitor journey's](https://s3-us-west-2.amazonaws.com/fiftyfourfooty/journey.png).
+- [visitor journey](https://s3-us-west-2.amazonaws.com/fiftyfourfooty/journey.png).
 
 
 ####Model the events using request object
