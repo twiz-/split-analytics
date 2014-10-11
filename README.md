@@ -154,11 +154,11 @@ Let's make the creation of our analytics objects, after any given action happens
   end
  ```
  
- Ok, so now every time you execute an action in your application an `AnalyticsEvent` should be created. To confirm this is working visit a couple pages in your applicaiton then open up your rails console and run `AnalyticsEvent.count`. This will basically return the number of actions you just committed by jumping around your application. 
+ Ok, so now every time you execute an action in your application an `AnalyticsEvent` should be created. To confirm this is working visit a couple pages in your applicaiton then open up your rails console and run `AnalyticsEvent.count`. This will return the number of actions you just committed by jumping around your application. 
  
 ####Create the analytics dashbaord
  
- Cool! We have details about each request being saved as records. Now, lets create a simple dashboard to view the details of all these records we're
+ Cool! We have details about each request saved as records. Now, lets create a simple dashboard to view the details of all these records we're
  saving. 
  
  `rails g controller analytics_events analytics_dashboard`
@@ -303,7 +303,7 @@ when we click through to the visitor journey page. So, let's update our analytic
 </div>
 ```
 
-Here we're basically adding the ip address to the url so we can use it to look up the events
+Here, we're adding the ip address to the url so we can use it to look up the events
 associated with the IP adress we care about to paint a visitors journey through our app. 
 
 One thing you may have noticed by now is we're tracking events to our actual analytics pages. We don't really care about that so let's fix it in the
@@ -333,11 +333,11 @@ In this view we have access to all the visitor actions associated with the IP ad
 </div>
 ```
 
-Ok, now we have a table of all visitor events that happen in our applicaiton and when we click on a visitor (ip address) we get a picture of how that visitor moved through our website. Sweet!
+Now, we have a table of all visitor events that happen in our application and when we click on a visitor (ip address) we get a picture of how that visitor moved through our website. Sweet!
 
 ####Basic split testing plumbing
 
-Now, let's revisit split testing. Back in your `application_controller` change back the `detect_variant` method
+Let's revisit split testing. Back in your `application_controller` change back the `detect_variant` method
 
 ```ruby
     def detect_variant
@@ -432,7 +432,7 @@ If you're worried about a variant being set and not having a corresponding view 
  Three things happened here. 
    1. Update the before action to only set the variant test names on pages/actions we are testing. 
    2. Change back the case statement to randomly pick an element from split_tests array 
-   3. In the `log_analytics` method we need to set the variant to something and when we visit a page other than home.html.erb given the code before this it would fail. So just set it to "no_test" if a visitor visits a page we're not testing. 
+   3. In the `log_analytics` method we need to set the variant to something and when we visit a page other than home.html.erb given the code before this it would fail. So, just set it to "no_test" if a visitor visits a page we're not testing. 
    
 Your control page can always be "A." Since rails fails back to default if no corresponding view is found as described above, you only have to make additional views for variants and your control will be displayed by default. A little confusing because you're setting the variant to control, but you don't need to do anything beyond that i.e. **only make additional views for variants**, rails takes care of the rest. 
 
