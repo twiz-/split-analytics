@@ -61,7 +61,7 @@ Let's make the creation of our analytics objects, after any given action happens
       AnalyticsEvent.create({      
         :test_name => variant,
         :visitor_ip_address => request.remote_ip,
-        :path_visited => request.url.gsub("http://",""),
+        :path_visited => request.url,
         :method_called => request.method,
         :controller_called => request.path_parameters[:controller],
         :controller_action_called => request.path_parameters[:action],
@@ -99,7 +99,7 @@ Let's make the creation of our analytics objects, after any given action happens
       AnalyticsEvent.create({      
         :test_name => variant,
         :visitor_ip_address => request.remote_ip,
-        :path_visited => request.url.gsub("http://",""),
+        :path_visited => request.url,
         :method_called => request.method,
         :controller_called => request.path_parameters[:controller],
         :controller_action_called => request.path_parameters[:action],
@@ -143,7 +143,7 @@ Let's make the creation of our analytics objects, after any given action happens
         :test_name => variant,
         :visitor_ip_address => request.remote_ip,
 		# this little bit of strig processing is just to make it look prettier
-        :path_visited => request.url.gsub("http://",""),
+        :path_visited => request.url,
         :method_called => request.method,
         :controller_called => request.path_parameters[:controller],
         :controller_action_called => request.path_parameters[:action],
@@ -418,7 +418,7 @@ If you're worried about a variant being set and not having a corresponding view 
       AnalyticsEvent.create({
         :test_name => variant,
         :visitor_ip_address => request.remote_ip,
-        :path_visited => request.url.gsub("http://",""),
+        :path_visited => request.url,
         :method_called => request.method,
         :controller_called => request.path_parameters[:controller],
         :controller_action_called => request.path_parameters[:action],
