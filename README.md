@@ -29,7 +29,7 @@ First, I'll create the model for the visitor events.
   rails g model AnalyticsEvent test_name:string visitor_ip_address:string path_visited:string method_called:string controller_called:string controller_action_called:string visit_time:string
 ````
 
-Nothing special here just creating the model to hold all the information from a visitor request that I care about. The test_name field is to keep track of what page the visitor saw if I'm serving up different pages for a split test. These are all methods you can call on the request object from within your `applcation_controller` so lets jump to that. Be sure to run the migration.
+Nothing special here just creating the model to hold all the information from a visitor request that I care about. The test_name field is to keep track of what page the visitor saw if I'm serving up different pages for a split test. These are all methods you can call on the request object from within your `application_controller` so lets jump to that. Be sure to run the migration.
 *note: you can just use rails `created_at` to determine `visit_time` but I added this field in case I wanted to create the record later using some delayed job.*
 
 ```ruby
@@ -163,9 +163,9 @@ Let's make the creation of our analytics objects, after any given action happens
  
  `rails g controller analytics_events analytics_dashboard`
  
- Create the controller to lookup the analytics records we're creating. Then hop into `views/analytics_events/` and create the file `analytics_dashboard.html.erb`
+ Create the controller to lookup the analytics records we're creating. 
  
- Now, back in your controller grab all the events that have been happening and make them accessible to the view. 
+Back in your controller grab all the events that have been happening and make them accessible to the view. 
  
  ```ruby
  class AnalyticsEventsController < ApplicationController
